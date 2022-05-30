@@ -1,10 +1,147 @@
 <template>
-  <div>Spu</div>
+  <div>
+    <el-card style="margin-bottom: 20px">
+      <CategorySelect
+        @getCategoryIds="getCategoryIds"
+        :isShowTable="isShowTable"
+      />
+    </el-card>
+
+    <div v-show="scene == 0">
+      <el-button
+        type="primary"
+        plain
+        icon="el-icon-plus"
+        :disabled="!isAbleClick"
+        @click="addOrUpdateSpu"
+        >添加SPU</el-button
+      >
+
+      <el-table border style="margin: 20px 0" :data="spuList">
+        <el-table-column
+          label="序号"
+          type="index"
+          width="80px"
+          align="center"
+        ></el-table-column>
+
+        <el-table-column
+          label="SPU名称"
+          prop="spuName"
+          width="300px"
+        ></el-table-column>
+
+        <el-table-column label="SPU描述" prop="description"></el-table-column>
+
+        <el-table-column label="操作" align="center" width="230px">
+          <template slot-scope="{ row }">
+            <el-button
+              type="success"
+              icon="el-icon-plus"
+              size="mini"
+              title="添加SKU"
+              @click="addSku"
+            ></el-button>
+            <el-button
+              type="warning"
+              icon="el-icon-edit"
+              size="mini"
+              title="修改SPU"
+              @click="addOrUpdateSpu"
+            ></el-button>
+            <el-button
+              type="info"
+              icon="el-icon-info"
+              size="mini"
+              title="查看SKU列表"
+            ></el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              title="删除SPU"
+            ></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination
+        :total="total"
+        :current-page="page"
+        :page-size="limit"
+        :page-sizes="[3, 5, 10]"
+        layout="prev,pager,next,jumper,->,sizes,total"
+        style="text-align: center"
+        @current-change="getSpuList"
+        @size-change="handleSizeChange"
+      ></el-pagination>
+    </div>
+
+    <SpuForm v-show="scene == 1" />
+
+    <SkuForm v-show="scene == 2" />
+  </div>
 </template>
 
 <script>
+import SpuForm from "./SpuForm";
+import SkuForm from "./SkuForm";
+
 export default {
   name: "Spu",
+  components: {
+    SpuForm,
+    SkuForm,
+  },
+  data() {
+    return {
+      categoryIds: {},
+      // 添加SPU是否可按
+      isAbleClick: false,
+      // 控制显示表格
+      isShowTable: true,
+      page: 1,
+      limit: 3,
+      total: 1,
+      spuList: [],
+      scene: 0, // 0为SPU列表 1为添加/修改SPU 2为添加SKU
+    };
+  },
+  methods: {
+    handleSizeChange(limit) {
+      this.limit = limit;
+      this.getSpuList();
+    },
+
+    getCategoryIds(categoryIds) {
+      this.categoryIds = categoryIds;
+      if (categoryIds.category3Id) {
+        this.isAbleClick = true;
+        this.getSpuList();
+      } else {
+        this.isAbleClick = false;
+      }
+    },
+    async getSpuList(pager = 1) {
+      this.page = pager;
+      const { category3Id } = this.categoryIds;
+      const { page, limit } = this;
+      let res = await this.$API.spu.reqSpuList(page, limit, category3Id);
+      if (res.code == 200) {
+        this.spuList = res.data.records;
+        this.total = res.data.total;
+      } else {
+        this.$message.error("获取SPU列表失败");
+      }
+    },
+
+    addOrUpdateSpu() {
+      this.scene = 1;
+    },
+    addSku() {
+      this.scene = 2;
+    },
+  },
 };
 </script>
 

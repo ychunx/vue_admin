@@ -6,166 +6,173 @@
         :isShowTable="isShowTable"
       />
     </el-card>
-    <el-card>
-      <div v-show="isShowTable">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          style="margin-bottom: 20px"
-          :disabled="!isAbleClick"
-          @click="addAttrShow"
-          >添加属性</el-button
-        >
 
-        <el-table :data="attrInfoList" border>
-          <el-table-column
-            label="序号"
-            type="index"
-            width="80px"
-            align="center"
-          ></el-table-column>
+    <div v-show="isShowTable">
+      <el-button
+        type="primary"
+        plain
+        icon="el-icon-plus"
+        style="margin-bottom: 20px"
+        :disabled="!isAbleClick"
+        @click="addAttrShow"
+        >添加属性</el-button
+      >
 
-          <el-table-column label="属性名称" width="120px" align="center">
-            <template slot-scope="{ row, $index }">
-              <span
-                style="display: block"
-                @click="clickAttrName(row, $index)"
-                v-if="!row.flag"
-                >{{ row.attrName }}</span
-              >
-              <el-input
-                v-model="attrInfo.attrName"
-                :ref="$index"
-                size="mini"
-                @blur="updateAttrName(row)"
-                v-else
-              ></el-input>
-            </template>
-          </el-table-column>
+      <el-table :data="attrInfoList" border>
+        <el-table-column
+          label="序号"
+          type="index"
+          width="80px"
+          align="center"
+        ></el-table-column>
 
-          <el-table-column label="属性值列表">
-            <template slot-scope="{ row, $index }">
-              <el-tag
-                v-for="(attrValue, index) in row.attrValueList"
-                :key="attrValue.id"
-                style="margin-right: 10px"
-                closable
-                :disable-transitions="true"
-                @close="handleClose(row, index)"
-              >
-                <span
-                  @click="clickAttrValue(row, attrValue, attrValue.id)"
-                  v-if="!attrValue.flag"
-                  >{{ attrValue.valueName }}</span
-                >
-                <el-input
-                  v-model="attrInfo.attrValueList[index].valueName"
-                  style="width: 100px"
-                  size="mini"
-                  :ref="attrValue.id"
-                  v-else
-                  @blur="updateAttrValue(row, attrValue)"
-                ></el-input>
-              </el-tag>
-              <el-input
-                class="input-new-tag"
-                :ref="$index"
-                size="small"
-                style="display: none"
-                v-model="inputString"
-                @blur="handleInputConfirm(row, $index)"
-              >
-              </el-input>
-            </template>
-          </el-table-column>
-
-          <el-table-column label="操作" width="150px" align="center">
-            <template slot-scope="{ row, $index }">
-              <el-button
-                type="success"
-                icon="el-icon-edit"
-                size="mini"
-                @click="showValueInput($index)"
-                >添加</el-button
-              >
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                @click="deleteAttr(row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-
-      <div v-show="!isShowTable">
-        <el-form :inline="true">
-          <el-form-item label="属性名">
+        <el-table-column label="属性名称" width="120px" align="center">
+          <template slot-scope="{ row, $index }">
+            <span
+              style="display: block"
+              @click="clickAttrName(row, $index)"
+              v-if="!row.flag"
+              >{{ row.attrName }}</span
+            >
             <el-input
               v-model="attrInfo.attrName"
-              placeholder="请输入属性名"
+              :ref="$index"
+              size="mini"
+              @blur="updateAttrName(row)"
+              v-else
             ></el-input>
-          </el-form-item>
-        </el-form>
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="addFormAttrValue"
-          :disabled="!attrInfo.attrName"
-          >添加属性值</el-button
-        >
-        <el-table
-          border
-          style="margin: 20px 0; width: 80%"
-          :data="attrInfo.attrValueList"
-        >
-          <el-table-column
-            label="序号"
-            type="index"
-            align="center"
-            width="80px"
-          ></el-table-column>
-          <el-table-column label="属性值">
-            <template slot-scope="{ row, $index }">
-              <el-input
-                v-if="row.flag"
-                v-model="row.valueName"
-                placeholder="请输入属性值"
-                size="mini"
-                @blur="row.flag = false"
-                :ref="$index"
-              ></el-input>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="属性值列表">
+          <template slot-scope="{ row, $index }">
+            <el-tag
+              v-for="(attrValue, index) in row.attrValueList"
+              :key="attrValue.id"
+              style="margin-right: 10px"
+              closable
+              :disable-transitions="true"
+              @close="handleClose(row, index)"
+            >
               <span
-                v-else
-                style="display: block"
-                @click="changeFormValue(row, $index)"
-                >{{ row.valueName }}</span
+                @click="clickAttrValue(row, attrValue, attrValue.id)"
+                v-if="!attrValue.flag"
+                >{{ attrValue.valueName }}</span
               >
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="95px">
-            <template slot-scope="{ row, $index }">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
+              <el-input
+                v-model="attrInfo.attrValueList[index].valueName"
+                style="width: 100px"
                 size="mini"
-                @click="deleteFormAttrValue(row, $index)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button
-          type="primary"
-          :disabled="attrInfo.attrValueList.length < 1 || !attrInfo.attrName"
-          @click="addAttr"
-          >保存</el-button
-        >
-        <el-button @click="isShowTable = true">取消</el-button>
-      </div>
-    </el-card>
+                :ref="attrValue.id"
+                v-else
+                @blur="updateAttrValue(row, attrValue)"
+              ></el-input>
+            </el-tag>
+            <el-input
+              class="input-new-tag"
+              :ref="$index"
+              size="small"
+              style="display: none"
+              v-model="inputString"
+              @blur="handleInputConfirm(row, $index)"
+            >
+            </el-input>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" width="150px" align="center">
+          <template slot-scope="{ row, $index }">
+            <el-button
+              type="success"
+              icon="el-icon-edit"
+              size="mini"
+              @click="showValueInput($index)"
+              title="添加属性值"
+              >添加</el-button
+            >
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="deleteAttr(row)"
+              title="删除属性"
+            ></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <div v-show="!isShowTable">
+      <el-form :inline="true">
+        <el-form-item label="属性名">
+          <el-input
+            v-model="attrInfo.attrName"
+            placeholder="请输入属性名"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        @click="addFormAttrValue"
+        :disabled="!attrInfo.attrName"
+        >添加属性值</el-button
+      >
+
+      <el-table
+        border
+        style="margin: 20px 0; width: 80%"
+        :data="attrInfo.attrValueList"
+      >
+        <el-table-column
+          label="序号"
+          type="index"
+          align="center"
+          width="80px"
+        ></el-table-column>
+
+        <el-table-column label="属性值">
+          <template slot-scope="{ row, $index }">
+            <el-input
+              v-if="row.flag"
+              v-model="row.valueName"
+              placeholder="请输入属性值"
+              size="mini"
+              @blur="row.flag = false"
+              :ref="$index"
+            ></el-input>
+            <span
+              v-else
+              style="display: block"
+              @click="changeFormValue(row, $index)"
+              >{{ row.valueName }}</span
+            >
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" width="95px">
+          <template slot-scope="{ row, $index }">
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="deleteFormAttrValue(row, $index)"
+              title="删除属性值"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-button
+        type="primary"
+        :disabled="attrInfo.attrValueList.length < 1 || !attrInfo.attrName"
+        @click="addAttr"
+        >保存</el-button
+      >
+      <el-button @click="isShowTable = true">取消</el-button>
+    </div>
   </div>
 </template>
 
@@ -199,15 +206,14 @@ export default {
   },
   methods: {
     getCategoryIds(categoryIds) {
+      this.categoryIds = categoryIds;
       if (categoryIds.category3Id) {
         this.isAbleClick = true;
         this.getAttrList(categoryIds);
-        this.categoryIds = categoryIds;
         this.attrInfo.categoryId = categoryIds.category3Id;
       } else {
         this.isAbleClick = false;
         this.attrInfoList = [];
-        this.categoryIds = categoryIds;
         this.attrInfo.categoryId = "";
       }
     },
@@ -226,16 +232,9 @@ export default {
         this.$refs[index].focus();
       });
     },
-    async updateAttrName(row) {
+    updateAttrName(row) {
       row.flag = false;
-      try {
-        await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
-        this.getAttrList(this.categoryIds);
-        this.$message.success("保存成功");
-      } catch (error) {
-        this.getAttrList(this.categoryIds);
-        this.$message.error("保存失败");
-      }
+      this.uploadDate("修改属性名");
     },
 
     // 修改属性值
@@ -247,29 +246,15 @@ export default {
         this.$refs[attrValueId][0].focus();
       });
     },
-    async updateAttrValue(row, attrValue) {
+    updateAttrValue(row, attrValue) {
       delete attrValue.flag;
-      try {
-        await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
-        this.getAttrList(this.categoryIds);
-        this.$message.success("保存成功");
-      } catch (error) {
-        this.getAttrList(this.categoryIds);
-        this.$message.error("保存失败");
-      }
+      this.uploadDate("修改属性值");
     },
     // 删除属性值
-    async handleClose(row, index) {
+    handleClose(row, index) {
       this.attrInfo = { ...row };
       this.attrInfo.attrValueList.splice(index, 1);
-      try {
-        await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
-        this.getAttrList(this.categoryIds);
-        this.$message.success("删除成功");
-      } catch (error) {
-        this.getAttrList(this.categoryIds);
-        this.$message.error("删除失败");
-      }
+      this.uploadDate("删除属性值");
     },
 
     // 添加属性值
@@ -281,7 +266,7 @@ export default {
         this.$refs[index].focus();
       });
     },
-    async handleInputConfirm(row, index) {
+    handleInputConfirm(row, index) {
       this.attrInfo = { ...row };
       //控制显示隐藏
       this.$refs[index].$el.style.display = "none";
@@ -290,15 +275,7 @@ export default {
         attrId: this.attrInfo.id,
         valueName: this.inputString,
       });
-
-      try {
-        await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
-        this.getAttrList(this.categoryIds);
-        this.$message.success("添加成功");
-      } catch (error) {
-        this.getAttrList(this.categoryIds);
-        this.$message.error("添加失败");
-      }
+      this.uploadDate("添加属性值");
     },
 
     // 删除属性
@@ -349,7 +326,7 @@ export default {
     deleteFormAttrValue(row, index) {
       this.attrInfo.attrValueList.splice(index, 1);
     },
-    async addAttr() {
+    addAttr() {
       // 过滤空白属性值和flag
       this.attrInfo.attrValueList = this.attrInfo.attrValueList.filter(
         (item) => {
@@ -359,14 +336,19 @@ export default {
           }
         }
       );
+      this.uploadDate("添加属性");
+      this.isShowTable = true;
+    },
+
+    // 上传数据
+    async uploadDate(string) {
       try {
         await this.$API.attr.reqAddOrUpdateAttr(this.attrInfo);
         this.getAttrList(this.categoryIds);
-        this.isShowTable = true;
-        this.$message.success("添加成功");
+        this.$message.success(`${string}成功`);
       } catch (error) {
         this.getAttrList(this.categoryIds);
-        this.$message.error("添加失败");
+        this.$message.error(`${string}失败`);
       }
     },
   },
