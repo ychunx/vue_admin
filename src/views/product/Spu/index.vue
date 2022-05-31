@@ -47,7 +47,7 @@
               icon="el-icon-edit"
               size="mini"
               title="修改SPU"
-              @click="addOrUpdateSpu"
+              @click="addOrUpdateSpu(row)"
             ></el-button>
             <el-button
               type="info"
@@ -77,9 +77,9 @@
       ></el-pagination>
     </div>
 
-    <SpuForm v-show="scene == 1" />
+    <SpuForm v-show="scene == 1" @back="back" />
 
-    <SkuForm v-show="scene == 2" />
+    <SkuForm v-show="scene == 2" @back="back" />
   </div>
 </template>
 
@@ -135,11 +135,20 @@ export default {
       }
     },
 
-    addOrUpdateSpu() {
+    addOrUpdateSpu(row) {
+      // 添加或修改
+      row.id
+        ? this.$bus.$emit("getSpuInfo", row, this.categoryIds.category3Id)
+        : this.$bus.$emit("addSpuInfo", this.categoryIds.category3Id);
       this.scene = 1;
     },
     addSku() {
       this.scene = 2;
+    },
+
+    back() {
+      this.scene = 0;
+      this.getSpuList();
     },
   },
 };

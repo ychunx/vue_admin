@@ -36,7 +36,6 @@ Vue.use(ElementUI, { locale })
 Vue.config.productionTip = false
 
 import API from '@/api'
-Vue.prototype.$API = API
 
 import CategorySelect from '@/components/CategorySelect'
 Vue.component(CategorySelect.name, CategorySelect)
@@ -45,5 +44,9 @@ new Vue({
   el: '#app',
   router,
   store,
+  beforeCreate() {
+    Vue.prototype.$bus = this
+    Vue.prototype.$API = API
+  },
   render: h => h(App)
 })
