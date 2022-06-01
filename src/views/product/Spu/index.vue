@@ -168,12 +168,14 @@ export default {
     },
 
     addOrUpdateSpu(row) {
+      this.isShowTable = false;
       // 添加或修改
       row.id
         ? this.$bus.$emit("getSpuInfo", row, this.categoryIds.category3Id)
         : this.$bus.$emit("addSpuInfo", this.categoryIds.category3Id);
     },
     addSku(row) {
+      this.isShowTable = false;
       this.$bus.$emit("getData", row, this.categoryIds);
     },
 
@@ -192,10 +194,13 @@ export default {
       if (act) {
         this.getSpuList(this.page);
       }
+      if (type == 0) {
+        this.isShowTable = true;
+      }
     },
 
     async showSkuListDialog(spu) {
-      let res = await this.$API.sku.reqSkuList(spu.id);
+      let res = await this.$API.spu.reqSkuList(spu.id);
       if (res.code == 200) {
         this.spuInfo = spu;
         this.skuList = res.data;
