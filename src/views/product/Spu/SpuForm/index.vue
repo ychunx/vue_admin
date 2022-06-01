@@ -137,7 +137,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="saveSpu">保存</el-button>
-        <el-button @click="$emit('back')">取消</el-button>
+        <el-button @click="$emit('changeScene', 0)">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -308,27 +308,27 @@ export default {
       data.spuImageList = [];
 
       for (let i = 0; i < this.spuImageList.length; i++) {
+        let spuImage = {};
+
         if (this.spuImageList[i].id) {
-          data.spuImageList[i].id = this.spuImageList[i].id;
+          spuImage.id = this.spuImageList[i].id;
         }
 
         if (this.spu.id) {
-          data.spuImageList[i].spuId = this.spu.id;
+          spuImage.spuId = this.spu.id;
         }
 
-        if (this.spuImageList[i].imgName) {
-          data.spuImageList[i].imgName = this.spuImageList[i].imgName;
-        } else {
-          data.spuImageList[i].imgName = this.spuImageList[i].name;
-        }
+        spuImage.imgName = this.spuImageList[i].name;
 
         if (this.spuImageList[i].imgUrl) {
-          data.spuImageList[i].imgUrl = this.spuImageList[i].imgUrl;
+          spuImage.imgUrl = this.spuImageList[i].imgUrl;
         } else {
-          data.spuImageList[i].imgUrl = this.spuImageList[i].response
+          spuImage.imgUrl = this.spuImageList[i].response
             ? this.spuImageList[i].response.data
             : this.spuImageList[i].url;
         }
+
+        data.spuImageList.push(spuImage);
       }
 
       let res = await this.$API.spu.reqAddOrUpdateSpu(data);
@@ -337,7 +337,7 @@ export default {
       } else {
         this.$message.error("保存SPU失败");
       }
-      this.$emit("back");
+      this.$emit("changeScene", 0, true);
     },
   },
   computed: {
@@ -365,40 +365,59 @@ export default {
       this.category3Id = category3Id;
 
       let tradeMarkRes = await this.$API.spu.reqTradeMarkList();
-      let baseSaleAttrRes = await this.$API.spu.reqBaseSaleAttrList();
-      if (tradeMarkRes.code == 200 && baseSaleAttrRes.code == 200) {
+      if (tradeMarkRes.code == 200) {
         this.tradeMarkList = tradeMarkRes.data;
-        this.baseSaleAttrList = baseSaleAttrRes.data;
       } else {
-        this.$message.error("获取数据失败");
+        this.$message.error("获取品牌数据失败");
+      }
+      let baseSaleAttrRes = await this.$API.spu.reqBaseSaleAttrList();
+      if (baseSaleAttrRes.code == 200) {
+        this.baseSaleAttrList = baseSaleAttrRes.data;
+        this.$emit("changeScene", 1);
+      } else {
+        this.$message.error("获取基础属性数据失败");
       }
     });
 
     // 获取SPU数据
     this.$bus.$on("getSpuInfo", async (spu, category3Id) => {
+      this.spu = {};
+      this.tradeMarkList = [];
+      this.spuImageList = [];
+      this.baseSaleAttrList = [];
       this.category3Id = category3Id;
-      let spuRes = await this.$API.spu.reqSpuInfo(spu.id);
-      let tradeMarkRes = await this.$API.spu.reqTradeMarkList();
-      let spuImageRes = await this.$API.spu.reqSpuImageList(spu.id);
-      let baseSaleAttrRes = await this.$API.spu.reqBaseSaleAttrList();
-      if (
-        spuRes.code == 200 &&
-        tradeMarkRes.code == 200 &&
-        spuImageRes.code == 200 &&
-        baseSaleAttrRes.code == 200
-      ) {
-        this.spu = spuRes.data;
-        this.tradeMarkList = tradeMarkRes.data;
 
+      let spuRes = await this.$API.spu.reqSpuInfo(spu.id);
+      if (spuRes.code == 200) {
+        this.spu = spuRes.data;
+      } else {
+        this.$message.error("获取SPU数据失败");
+      }
+
+      let tradeMarkRes = await this.$API.spu.reqTradeMarkList();
+      if (tradeMarkRes.code == 200) {
+        this.tradeMarkList = tradeMarkRes.data;
+      } else {
+        this.$message.error("获取品牌数据失败");
+      }
+
+      let spuImageRes = await this.$API.spu.reqSpuImageList(spu.id);
+      if (spuImageRes.code == 200) {
         this.spuImageList = spuImageRes.data;
         this.spuImageList.forEach((item) => {
           item.name = item.imgName;
           item.url = item.imgUrl;
         });
+        this.$emit("changeScene", 1);
+      } else {
+        this.$message.error("获取SPU图片数据失败");
+      }
 
+      let baseSaleAttrRes = await this.$API.spu.reqBaseSaleAttrList();
+      if (baseSaleAttrRes.code == 200) {
         this.baseSaleAttrList = baseSaleAttrRes.data;
       } else {
-        this.$message.error("获取SPU数据失败");
+        this.$message.error("获取基础属性数据失败");
       }
     });
   },

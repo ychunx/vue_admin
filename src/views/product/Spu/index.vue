@@ -40,7 +40,7 @@
               icon="el-icon-plus"
               size="mini"
               title="添加SKU"
-              @click="addSku"
+              @click="addSku(row)"
             ></el-button>
             <el-button
               type="warning"
@@ -54,12 +54,14 @@
               icon="el-icon-info"
               size="mini"
               title="查看SKU列表"
+              @click="showSkuListDialog(row)"
             ></el-button>
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
               title="删除SPU"
+              @click="deleteSpu(row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -77,9 +79,35 @@
       ></el-pagination>
     </div>
 
-    <SpuForm v-show="scene == 1" @back="back" />
+    <el-dialog
+      :title="`${spuInfo.spuName}的Sku列表`"
+      :visible.sync="dialogTableVisible"
+    >
+      <el-table :data="skuList" border>
+        <el-table-column label="名称" prop="skuName"></el-table-column>
+        <el-table-column
+          label="价格"
+          prop="price"
+          align="center"
+          width="130px"
+        ></el-table-column>
+        <el-table-column
+          label="重量"
+          prop="weight"
+          align="center"
+          width="130px"
+        ></el-table-column>
+        <el-table-column label="默认图片" width="130px" align="center">
+          <template slot-scope="{ row }">
+            <img :src="row.skuDefaultImg" style="width: 100px; height: 100px" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
 
-    <SkuForm v-show="scene == 2" @back="back" />
+    <SpuForm v-show="scene == 1" @changeScene="changeScene" />
+
+    <SkuForm v-show="scene == 2" @changeScene="changeScene" />
   </div>
 </template>
 
@@ -105,6 +133,10 @@ export default {
       total: 1,
       spuList: [],
       scene: 0, // 0为SPU列表 1为添加/修改SPU 2为添加SKU
+
+      dialogTableVisible: false, // 控制sku列表对话框显示
+      spuInfo: {},
+      skuList: [],
     };
   },
   methods: {
@@ -140,15 +172,37 @@ export default {
       row.id
         ? this.$bus.$emit("getSpuInfo", row, this.categoryIds.category3Id)
         : this.$bus.$emit("addSpuInfo", this.categoryIds.category3Id);
-      this.scene = 1;
     },
-    addSku() {
-      this.scene = 2;
+    addSku(row) {
+      this.$bus.$emit("getData", row, this.categoryIds);
     },
 
-    back() {
-      this.scene = 0;
-      this.getSpuList();
+    async deleteSpu(row) {
+      let res = await this.$API.spu.reqDeleteSpu(row.id);
+      if (res.code == 200) {
+        this.getSpuList(this.spuList.length > 1 ? this.page : this.page - 1);
+        this.$message.success("删除SPU成功");
+      } else {
+        this.$message.error("删除SPU失败");
+      }
+    },
+
+    changeScene(type, act) {
+      this.scene = type;
+      if (act) {
+        this.getSpuList(this.page);
+      }
+    },
+
+    async showSkuListDialog(spu) {
+      let res = await this.$API.sku.reqSkuList(spu.id);
+      if (res.code == 200) {
+        this.spuInfo = spu;
+        this.skuList = res.data;
+        this.dialogTableVisible = true;
+      } else {
+        this.$message.error("获取Sku列表数据失败");
+      }
     },
   },
 };

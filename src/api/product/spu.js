@@ -17,3 +17,11 @@ export const reqAddOrUpdateSpu = (data) => {
         return request({ url: '/admin/product/saveSpuInfo', data, method: 'post' })
     }
 }
+
+export const reqDeleteSpu = (spuId) => request({ url: `/admin/product/deleteSpu/${spuId}`, method: 'delete' })
+
+export const reqSpuSaleAttrList = (spuId) => request({ url: `/admin/product/spuSaleAttrList/${spuId}`, method: 'get' })
+
+export const reqAttrInfoList = (ids) => request({ url: `/admin/product/attrInfoList/${ids.category1Id}/${ids.category2Id}/${ids.category3Id}`, method: 'get' })
+
+export const reqAddSku = (data) => request({ url: '/admin/product/saveSkuInfo', data, method: 'post' })
