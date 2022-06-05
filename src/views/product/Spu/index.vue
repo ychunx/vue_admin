@@ -14,6 +14,7 @@
         icon="el-icon-plus"
         :disabled="!isAbleClick"
         @click="addOrUpdateSpu"
+        v-show="$store.state.user.buttons.indexOf('btn.Spu.add') != -1"
         >添加SPU</el-button
       >
 
@@ -41,6 +42,7 @@
               size="mini"
               title="添加SKU"
               @click="addSku(row)"
+              v-show="$store.state.user.buttons.indexOf('btn.Spu.addsku') != -1"
             ></el-button>
             <el-button
               type="warning"
@@ -48,6 +50,7 @@
               size="mini"
               title="修改SPU"
               @click="addOrUpdateSpu(row)"
+              v-show="$store.state.user.buttons.indexOf('btn.Spu.update') != -1"
             ></el-button>
             <el-button
               type="info"
@@ -55,6 +58,7 @@
               size="mini"
               title="查看SKU列表"
               @click="showSkuListDialog(row)"
+              v-show="$store.state.user.buttons.indexOf('btn.Spu.skus') != -1"
             ></el-button>
             <el-button
               type="danger"
@@ -62,6 +66,7 @@
               size="mini"
               title="删除SPU"
               @click="deleteSpu(row)"
+              v-show="$store.state.user.buttons.indexOf('btn.Spu.delete') != -1"
             ></el-button>
           </template>
         </el-table-column>

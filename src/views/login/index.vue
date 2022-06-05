@@ -57,6 +57,8 @@
         >登录</el-button
       >
     </el-form>
+    <div class="tips">最高权限：admin 111111</div>
+    <div class="tips">普通权限：admin888 888</div>
   </div>
 </template>
 
@@ -199,6 +201,11 @@ $light_gray: #eee;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
+
+  .tips {
+    text-align: center;
+    color: #fff;
+  }
 
   .login-form {
     position: relative;

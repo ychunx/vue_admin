@@ -15,6 +15,7 @@
         style="margin-bottom: 20px"
         :disabled="!isAbleClick"
         @click="addAttrShow"
+        v-show="$store.state.user.buttons.indexOf('btn.Attr.add') != -1"
         >添加属性</el-button
       >
 
@@ -88,6 +89,9 @@
               size="mini"
               @click="showValueInput($index)"
               title="添加属性值"
+              v-show="
+                $store.state.user.buttons.indexOf('btn.Attr.update') != -1
+              "
               >添加</el-button
             >
             <el-button
@@ -96,6 +100,9 @@
               size="mini"
               @click="deleteAttr(row)"
               title="删除属性"
+              v-show="
+                $store.state.user.buttons.indexOf('btn.Attr.remove') != -1
+              "
             ></el-button>
           </template>
         </el-table-column>

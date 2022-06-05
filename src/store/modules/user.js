@@ -1,13 +1,31 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { resetRouter, asyncRoutes, constantRoutes, anyRoutes } from '@/router'
+import router from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    routes: [],
+    roles: [],
+    buttons: [],
+    allowAbleRoutes: []
   }
+}
+
+// 计算用户被允许进入的异步路由
+const getAsyncRoutes = (asyncRoutes, routes) => {
+  return asyncRoutes.filter(item => {
+    if (routes.indexOf(item.name) != -1) {
+      // 递归全部
+      if (item.children && item.children.length) {
+        item.children = getAsyncRoutes(item.children, routes)
+      }
+      return true
+    }
+  })
 }
 
 const state = getDefaultState()
@@ -19,11 +37,17 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USERINFO: (state, userInfo) => {
+    state.name = userInfo.name
+    state.avatar = userInfo.avatar
+    state.routes = userInfo.routes
+    state.roles = userInfo.roles
+    state.buttons = userInfo.buttons
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_ALLOWABLEROUTES: (state, res) => {
+    state.allowAbleRoutes = constantRoutes.concat(res, anyRoutes)
+    // 添加被允许的路径给路由（不能给全部路由，因为本来就有常量路由，会重复）
+    router.addRoutes(res.concat(anyRoutes))
   }
 }
 
@@ -43,9 +67,8 @@ const actions = {
   async getInfo({ commit, state }) {
     const res = await getInfo(state.token)
     if (res.code === 20000 && res.data) {
-      const { name, avatar } = res.data
-      commit('SET_NAME', name)
-      commit('SET_AVATAR', avatar)
+      commit('SET_USERINFO', res.data)
+      commit('SET_ALLOWABLEROUTES', getAsyncRoutes(asyncRoutes, res.data.routes))
       return 'ok'
     } else {
       return Promise.reject(new Error('faile'))

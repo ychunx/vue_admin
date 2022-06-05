@@ -39,6 +39,7 @@
             title="上架"
             v-if="row.isSale == 0"
             @click="sale(row)"
+            v-show="$store.state.user.buttons.indexOf('btn.Sku.updown') != -1"
           ></el-button>
           <el-button
             type="warning"
@@ -47,6 +48,7 @@
             title="下架"
             v-else
             @click="soldOut(row)"
+            v-show="$store.state.user.buttons.indexOf('btn.Sku.updown') != -1"
           ></el-button>
           <el-button
             type="primary"
@@ -54,6 +56,7 @@
             icon="el-icon-edit"
             title="修改"
             @click="$message('假的，别按了')"
+            v-show="$store.state.user.buttons.indexOf('btn.Sku.update') != -1"
           ></el-button>
           <el-button
             type="info"
@@ -61,6 +64,7 @@
             icon="el-icon-info"
             title="查看信息"
             @click="getSkuInfo(row)"
+            v-show="$store.state.user.buttons.indexOf('btn.Sku.detail') != -1"
           ></el-button>
           <el-button
             type="danger"
@@ -68,6 +72,7 @@
             icon="el-icon-delete"
             title="删除"
             @click="deleteSku(row)"
+            v-show="$store.state.user.buttons.indexOf('btn.Sku.remove') != -1"
           ></el-button>
         </template>
       </el-table-column>

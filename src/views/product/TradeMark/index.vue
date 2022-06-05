@@ -6,6 +6,7 @@
       icon="el-icon-plus"
       style="margin-bottom: 20px"
       @click="showDialog"
+      v-show="$store.state.user.buttons.indexOf('btn.Trademark.add') != -1"
       >添加</el-button
     >
 
@@ -32,6 +33,9 @@
             icon="el-icon-edit"
             size="mini"
             @click="showDialog(row)"
+            v-show="
+              $store.state.user.buttons.indexOf('btn.Trademark.update') != -1
+            "
             >修改</el-button
           >
           <el-button
@@ -39,6 +43,9 @@
             icon="el-icon-delete"
             size="mini"
             @click="deleteTradeMark(row)"
+            v-show="
+              $store.state.user.buttons.indexOf('btn.Trademark.remove') != -1
+            "
             >删除</el-button
           >
         </template>
