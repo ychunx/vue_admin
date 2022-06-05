@@ -40,6 +40,12 @@ import API from '@/api'
 import CategorySelect from '@/components/CategorySelect'
 Vue.component(CategorySelect.name, CategorySelect)
 
+// p197 获取mock失败的兄弟，不要学老师before：的写法，直接在main.js里用这段话：
+if (process.env.NODE_ENV === 'development') {
+  const { mockXHR } = require('../mock')
+  mockXHR()
+}
+
 new Vue({
   el: '#app',
   router,

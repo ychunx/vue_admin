@@ -4,6 +4,7 @@
       <el-tab-pane label="销售额" name="first"> </el-tab-pane>
       <el-tab-pane label="访问量" name="second"> </el-tab-pane>
     </el-tabs>
+    <!-- 因为后期还要和tabheader进行交互，为了方便body就不拆分组件了 -->
     <el-row :gutter="10">
       <el-col :span="18">
         <div class="chart" ref="chart"></div>
@@ -11,40 +12,10 @@
       <el-col :span="6" class="el-col-right">
         <h3>门店{{ activeName == "first" ? "销售额" : "访问量" }}排名</h3>
         <ul>
-          <li>
-            <span>1</span>
-            <span>海底捞</span>
-            <span>68688686</span>
-          </li>
-          <li>
-            <span>2</span>
-            <span>真功夫</span>
-            <span>26465734</span>
-          </li>
-          <li>
-            <span>3</span>
-            <span>正新鸡排</span>
-            <span>6423564</span>
-          </li>
-          <li>
-            <span>4</span>
-            <span>华莱士</span>
-            <span>2675868</span>
-          </li>
-          <li>
-            <span>5</span>
-            <span>叫了只炸鸡</span>
-            <span>489658</span>
-          </li>
-          <li>
-            <span>6</span>
-            <span>德克士</span>
-            <span>96545</span>
-          </li>
-          <li>
-            <span>7</span>
-            <span>麦当当</span>
-            <span>12546</span>
+          <li v-for="tradeMark in rankList" :key="tradeMark.no">
+            <span>{{ tradeMark.no }}</span>
+            <span>{{ tradeMark.name }}</span>
+            <span>{{ tradeMark.money }}</span>
           </li>
         </ul>
       </el-col>
@@ -73,6 +44,7 @@
 import * as echarts from "echarts";
 export default {
   name: "Sale",
+  props: ["list"],
   data() {
     return {
       activeName: "first",
@@ -130,71 +102,85 @@ export default {
       }
     },
   },
-  mounted() {
-    this.mychart = echarts.init(this.$refs.chart);
-    this.mychart.setOption({
-      title: {
-        text: (this.activeName == "first" ? "销售额" : "访问量") + "趋势",
-        textStyle: {
-          fontSize: 14,
-        },
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "shadow",
-        },
-      },
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true,
-      },
-      xAxis: [
-        {
-          type: "category",
-          data: [
-            "一月",
-            "二月",
-            "三月",
-            "四月",
-            "五月",
-            "六月",
-            "七月",
-            "八月",
-            "九月",
-            "十月",
-            "十一月",
-            "十二月",
-          ],
-          axisTick: {
-            alignWithLabel: true,
+  watch: {
+    // 获得list数据后第一时间绘制chart
+    list() {
+      this.mychart = echarts.init(this.$refs.chart);
+      this.mychart.setOption({
+        title: {
+          text: (this.activeName == "first" ? "销售额" : "访问量") + "趋势",
+          textStyle: {
+            fontSize: 14,
           },
         },
-      ],
-      yAxis: [
-        {
-          type: "value",
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow",
+          },
         },
-      ],
-      series: [
-        {
-          name: "Direct",
-          type: "bar",
-          barWidth: "40%",
-          data: [10, 52, 200, 334, 390, 330, 220, 232, 154, 62, 526, 121],
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
         },
-      ],
-    });
-  },
-  watch: {
+        xAxis: [
+          {
+            type: "category",
+            data: this.list.orderFullYearAxis,
+            axisTick: {
+              alignWithLabel: true,
+            },
+          },
+        ],
+        yAxis: [
+          {
+            type: "value",
+          },
+        ],
+        series: [
+          {
+            name: "Direct",
+            type: "bar",
+            barWidth: "40%",
+            data: this.list.orderFullYear,
+          },
+        ],
+      });
+    },
+    // 改变tab重绘chart
     activeName() {
       this.mychart.setOption({
         title: {
           text: (this.activeName == "first" ? "销售额" : "访问量") + "趋势",
         },
+        xAxis: {
+          data:
+            this.activeName == "first"
+              ? this.list.orderFullYearAxis
+              : this.list.userFullYearAxis,
+        },
+        series: [
+          {
+            name: "Direct",
+            type: "bar",
+            barWidth: "40%",
+            data:
+              this.activeName == "first"
+                ? this.list.orderFullYear
+                : this.list.userFullYear,
+          },
+        ],
       });
+    },
+  },
+  computed: {
+    // 计算应该展示的排名列表
+    rankList() {
+      return this.activeName == "first"
+        ? this.list.orderRank
+        : this.list.userRank;
     },
   },
 };
@@ -202,7 +188,7 @@ export default {
 
 <style scoped>
 .box-card {
-  margin-top: 20px;
+  margin: 20px 0;
   height: 400px;
   position: relative;
 }

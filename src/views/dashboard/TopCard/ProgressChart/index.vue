@@ -6,43 +6,46 @@
 import * as echarts from "echarts";
 export default {
   name: "LineChart",
-  mounted() {
-    let lineChart = echarts.init(this.$refs.chart);
-    lineChart.setOption({
-      xAxis: {
-        show: false,
-        min: 0,
-        max: 100,
-      },
-      yAxis: {
-        show: false,
-        type: "category",
-      },
-      series: [
-        {
-          type: "bar",
-          data: [78],
-          barWidth: 10,
-          color: "yellowgreen",
-          showBackground: true,
-          backgroundStyle: {
-            color: "#eee",
-          },
-          label: {
-            show: true,
-            formatter: "|",
-            position: "right",
-            color: "yellowgreen",
-          },
+  props: ["rate"],
+  watch: {
+    rate() {
+      let lineChart = echarts.init(this.$refs.chart);
+      lineChart.setOption({
+        xAxis: {
+          show: false,
+          min: 0,
+          max: 100,
         },
-      ],
-      grid: {
-        left: -10,
-        right: -10,
-        top: 0,
-        bottom: 0,
-      },
-    });
+        yAxis: {
+          show: false,
+          type: "category",
+        },
+        series: [
+          {
+            type: "bar",
+            data: [this.rate],
+            barWidth: 10,
+            color: "yellowgreen",
+            showBackground: true,
+            backgroundStyle: {
+              color: "#eee",
+            },
+            label: {
+              show: true,
+              formatter: "|",
+              position: "right",
+              color: "yellowgreen",
+            },
+          },
+        ],
+        grid: {
+          left: -10,
+          right: -10,
+          top: 0,
+          bottom: 0,
+        },
+      });
+    },
   },
 };
 </script>
