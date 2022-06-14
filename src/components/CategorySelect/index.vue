@@ -1,4 +1,5 @@
 <template>
+  <!-- 平台一二三级分类选择全局组件 -->
   <div>
     <el-form :inline="true" :model="categoryForm" class="demo-form-inline">
       <el-form-item label="一级分类">
@@ -53,13 +54,15 @@
 <script>
 export default {
   name: "CategorySelect",
-  props: ["isShowTable"],
+  props: ["isShowTable"], // 判断是否可选择
   data() {
     return {
+      // 一二三级分类ID
       category1List: [],
       category2List: [],
       category3List: [],
 
+      // 调用接口所需要的各级ID
       categoryForm: {
         category1Id: "",
         category2Id: "",
@@ -68,50 +71,67 @@ export default {
     };
   },
   methods: {
+    // 获取一级分类列表
     async getCategory1List() {
       let res = await this.$API.attr.reqCategory1List();
       if (res.code == 200) {
         this.category1List = res.data;
       }
     },
+
+    // 选择一级ID后回调函数
     async handler1() {
+      // 防止先前已选过二三级分类，所以预先清空
       this.category2List = [];
       this.category3List = [];
       this.categoryForm.category2Id = "";
       this.categoryForm.category3Id = "";
 
+      // 传递一二三级分类ID给父组件
       let { category1Id } = this.categoryForm;
       this.$emit("getCategoryIds", {
         category1Id,
         category2Id: "",
         category3Id: "",
       });
+
+      // 根据一级ID获取二级列表
       let res = await this.$API.attr.reqCategory2List(category1Id);
       if (res.code == 200) {
         this.category2List = res.data;
       }
     },
+
+    // 选择二级ID后回调函数
     async handler2() {
+      // 防止先前已选过三级分类，所以预先清空
       this.category3List = [];
       this.categoryForm.category3Id = "";
 
+      // 传递一二三级分类ID给父组件
       let { category1Id, category2Id } = this.categoryForm;
       this.$emit("getCategoryIds", {
         category1Id,
         category2Id,
         category3Id: "",
       });
+
+      // 根据二级ID获取三级列表
       let res = await this.$API.attr.reqCategory3List(category2Id);
       if (res.code == 200) {
         this.category3List = res.data;
       }
     },
+
+    // 选择三级ID后回调函数
     handler3() {
       let { category1Id, category2Id, category3Id } = this.categoryForm;
+      // 传递一二三级分类ID给父组件
       this.$emit("getCategoryIds", { category1Id, category2Id, category3Id });
     },
   },
   mounted() {
+    // 挂载后获取一级分类列表
     this.getCategory1List();
   },
 };

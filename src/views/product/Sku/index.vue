@@ -104,12 +104,13 @@ export default {
       page: 1,
       limit: 3,
       total: 0,
-      skuList: [],
-      skuInfo: {},
-      drawer: false,
+      skuList: [], // sku列表
+      skuInfo: {}, // 某个sku信息
+      drawer: false, // 弹出的抽屉
     };
   },
   methods: {
+    // 获取sku列表
     async getSkuList(pager = 1) {
       this.page = pager;
       const { page, limit } = this;
@@ -127,6 +128,7 @@ export default {
       this.getSkuList();
     },
 
+    // 上架
     async sale(sku) {
       let res = await this.$API.sku.reqSale(sku.id);
       if (res.code == 200) {
@@ -137,6 +139,7 @@ export default {
       }
     },
 
+    // 下架
     async soldOut(sku) {
       let res = await this.$API.sku.reqSoldOut(sku.id);
       if (res.code == 200) {
@@ -147,6 +150,7 @@ export default {
       }
     },
 
+    // 获取某个sku信息
     async getSkuInfo(sku) {
       let res = await this.$API.sku.reqSkuInfo(sku.id);
       if (res.code == 200) {
@@ -157,6 +161,7 @@ export default {
       }
     },
 
+    // 删除sku
     async deleteSku(sku) {
       let res = await this.$API.sku.reqDeleteSku(sku.id);
       if (res.code == 200) {

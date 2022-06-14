@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 品牌管理 -->
     <el-button
       type="primary"
       plain
@@ -107,6 +108,7 @@ export default {
       limit: 3,
       total: 0,
       list: [],
+
       dialogFormVisible: false,
       logoImg: "",
       tmForm: {
@@ -128,6 +130,7 @@ export default {
     };
   },
   methods: {
+    // 获取品牌列表数据
     async getPageList(pager = 1) {
       this.page = pager;
       const { page, limit } = this;
@@ -153,11 +156,13 @@ export default {
       this.dialogFormVisible = true;
     },
 
+    // 上传图片成功
     handleAvatarSuccess(res) {
       this.tmForm.logoUrl = res.data;
       // 奇怪，vue不能主动检测到对象内属性变化
       this.logoImg = res.data;
     },
+    // 上传图片前
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -171,6 +176,7 @@ export default {
       return isJPG && isLt2M;
     },
 
+    // 添加或修改品牌信息
     addOrUpdateTradeMark() {
       this.$refs.dialog.validate(async (valid) => {
         if (valid) {
@@ -195,6 +201,7 @@ export default {
         }
       });
     },
+    // 删除品牌
     deleteTradeMark(row) {
       this.$confirm(`此操作将永久删除${row.tmName}品牌, 是否继续?`, "提示", {
         confirmButtonText: "确定",

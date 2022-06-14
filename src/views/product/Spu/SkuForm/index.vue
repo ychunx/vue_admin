@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 收集sku信息数据 -->
     <el-form label-width="80px">
       <el-form-item label="SPU名称"> {{ spuInfo.spuName }} </el-form-item>
       <el-form-item label="SKU名称">
@@ -119,11 +120,13 @@ export default {
   name: "SkuForm",
   data() {
     return {
-      spuImageList: [],
-      spuSaleAttrList: [],
-      attrInfoList: [],
-      spuInfo: {},
-      selectedImageList: [],
+      spuImageList: [], // spu拥有的图片
+      spuSaleAttrList: [], // spu拥有的售卖属性
+      attrInfoList: [], // 属性值
+      spuInfo: {}, // spu信息
+      selectedImageList: [], // sku所勾选的spu图片
+
+      // 上传服务器的sku信息格式
       skuInfo: {
         category3Id: 0,
         spuId: 0,
@@ -182,6 +185,7 @@ export default {
       this.skuInfo.skuDefaultImg = row.imgUrl;
     },
 
+    // 添加sku
     async addSku() {
       this.attrInfoList.forEach((item) => {
         if (item.attrInfo) {

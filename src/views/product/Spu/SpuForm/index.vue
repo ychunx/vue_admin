@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 收集spu信息数据 -->
     <el-form ref="form" label-width="80px">
       <el-form-item label="SPU名称">
         <el-input

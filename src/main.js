@@ -37,6 +37,7 @@ Vue.config.productionTip = false
 
 import API from '@/api'
 
+// 注册全局组件三级分类选择器
 import CategorySelect from '@/components/CategorySelect'
 Vue.component(CategorySelect.name, CategorySelect)
 

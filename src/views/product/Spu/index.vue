@@ -150,8 +150,10 @@ export default {
       this.getSpuList();
     },
 
+    // 获取三级ID
     getCategoryIds(categoryIds) {
       this.categoryIds = categoryIds;
+      // 如果包含第三级则获取spu数据和可添加spu
       if (categoryIds.category3Id) {
         this.isAbleClick = true;
         this.getSpuList();
@@ -159,6 +161,7 @@ export default {
         this.isAbleClick = false;
       }
     },
+    // 获取spu列表数据
     async getSpuList(pager = 1) {
       this.page = pager;
       const { category3Id } = this.categoryIds;
@@ -172,6 +175,7 @@ export default {
       }
     },
 
+    // 添加或修改spu
     addOrUpdateSpu(row) {
       this.isShowTable = false;
       // 添加或修改
@@ -179,11 +183,13 @@ export default {
         ? this.$bus.$emit("getSpuInfo", row, this.categoryIds.category3Id)
         : this.$bus.$emit("addSpuInfo", this.categoryIds.category3Id);
     },
+    // 为spu添加sku
     addSku(row) {
       this.isShowTable = false;
       this.$bus.$emit("getData", row, this.categoryIds);
     },
 
+    // 删除spu
     async deleteSpu(row) {
       let res = await this.$API.spu.reqDeleteSpu(row.id);
       if (res.code == 200) {
@@ -194,6 +200,7 @@ export default {
       }
     },
 
+    // 改变当前展现页面
     changeScene(type, act) {
       this.scene = type;
       if (act) {
@@ -204,6 +211,7 @@ export default {
       }
     },
 
+    // 显示某spu的sku列表
     async showSkuListDialog(spu) {
       let res = await this.$API.spu.reqSkuList(spu.id);
       if (res.code == 200) {

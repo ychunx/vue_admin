@@ -39,6 +39,7 @@ export default {
         });
       }
     },
+
     // 整理返回数据
     fixData() {
       const { online, shop } = this.rank;
@@ -118,6 +119,7 @@ export default {
         });
       });
     },
+
     // 改变查看渠道时重绘chart
     value(newVal) {
       if (newVal == "线上") {

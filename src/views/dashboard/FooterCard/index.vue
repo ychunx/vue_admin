@@ -1,4 +1,5 @@
 <template>
+  <!-- 主页页尾组件 -->
   <el-row :gutter="20">
     <el-col :span="12">
       <Search :list="list.searchWord" />

@@ -58,7 +58,7 @@
       >
     </el-form>
     <div class="tips">最高权限：admin 111111</div>
-    <div class="tips">普通权限：admin888 888</div>
+    <div class="tips">普通权限：admin8 888888</div>
   </div>
 </template>
 

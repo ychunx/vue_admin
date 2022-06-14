@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 三级分类选择器 -->
     <el-card style="margin-bottom: 20px">
       <CategorySelect
         @getCategoryIds="getCategoryIds"
@@ -7,6 +8,7 @@
       />
     </el-card>
 
+    <!-- 切换显示表格还是添加属性时的表单页面 -->
     <div v-show="isShowTable">
       <el-button
         type="primary"
@@ -109,6 +111,7 @@
       </el-table>
     </div>
 
+    <!-- 切换显示表格还是添加属性时的表单页面 -->
     <div v-show="!isShowTable">
       <el-form :inline="true">
         <el-form-item label="属性名">

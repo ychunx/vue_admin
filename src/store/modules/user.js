@@ -11,7 +11,7 @@ const getDefaultState = () => {
     routes: [],
     roles: [],
     buttons: [],
-    allowAbleRoutes: []
+    allowAbleRoutes: [], // 用户被允许进入的异步路由
   }
 }
 
@@ -52,10 +52,12 @@ const mutations = {
 }
 
 const actions = {
+  // 登录
   async login({ commit }, userInfo) {
     const { username, password } = userInfo
     const res = await login({ username: username.trim(), password: password })
     if (res.code === 20000) {
+      // 存储token到vuex和本地Cookies
       commit('SET_TOKEN', res.data.token)
       setToken(res.data.token)
       return 'ok'
@@ -64,10 +66,12 @@ const actions = {
     }
   },
 
+  // 获取用户信息
   async getInfo({ commit, state }) {
     const res = await getInfo(state.token)
     if (res.code === 20000 && res.data) {
       commit('SET_USERINFO', res.data)
+      // 根据返回的用户允许路由信息计算出用户所能通过的所有路由
       commit('SET_ALLOWABLEROUTES', getAsyncRoutes(asyncRoutes, res.data.routes))
       return 'ok'
     } else {
@@ -75,6 +79,7 @@ const actions = {
     }
   },
 
+  // 登出
   async logout({ commit, state }) {
     const res = await logout(state.token)
     if (res.code === 20000) {
@@ -87,6 +92,7 @@ const actions = {
     }
   },
 
+  // 清除token
   resetToken({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
